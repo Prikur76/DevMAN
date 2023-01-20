@@ -14,9 +14,9 @@ def get_current_timestamp():
 
 def get_all_reviews_from_dvmn(token):
     """Возвращает список проверок с сайта"""
-    URL_REVIEWS = 'https://dvmn.org/api/user_reviews/'
+    url_reviews = 'https://dvmn.org/api/user_reviews/'
     headers = {'Authorization': f'Token {token}'}
-    response = requests.get(url=URL_REVIEWS, headers=headers)
+    response = requests.get(url=url_reviews, headers=headers)
     response.raise_for_status()
     return response.json()
 
@@ -44,6 +44,6 @@ def get_long_polling(token):
 
 
 if __name__ == '__main__':
-    TOKEN = os.environ.get('TOKEN')
-    get_long_polling(TOKEN)
+    token = os.environ.get('TOKEN')
+    get_long_polling(token)
     

@@ -2,6 +2,7 @@ import os
 import logging
 
 from telegram import (
+    Bot,
     Update,
     ForceReply,
     InlineKeyboardButton,
@@ -61,20 +62,21 @@ def button(update: Update, context: CallbackContext) -> None:
 
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Используйте /start для теста бота"')
+    update.message.reply_text('Используйте /start для теста бота')
 
 
 def main() -> None:
     load_dotenv()
     tg_token = os.environ.get('TG_TOKEN')
+    bot = Bot(token=tg_token)
+
+    bot.send_message(chat_id=283111606, text="I'm sorry Dave I'm afraid I can't do that.")
 
     updater = Updater(token=tg_token)
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CallbackQueryHandler(button))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CallbackQueryHandler(button))
+    dp.add_handler(CommandHandler("help", help_command))
 
     # Start the Bot
     updater.start_polling()

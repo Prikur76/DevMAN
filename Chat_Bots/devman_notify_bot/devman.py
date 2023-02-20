@@ -7,7 +7,7 @@ import requests
 from dotenv import load_dotenv
 import time
 
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -34,7 +34,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Используйте /start для теста бота"')
+    update.message.reply_text('Используйте /start для теста бота')
 
 
 def get_message_for_chat(result_code_review):
@@ -52,6 +52,7 @@ def bop(bot, update):
     message = get_message_for_chat(result_code_review)
     chat_id = update.message.chat_id
     bot.sendMessage(chat_id=chat_id, text=message)
+
 
 def get_current_timestamp():
     """Возвращает текущую дату/время в формате timestamp"""
@@ -113,33 +114,32 @@ def get_all_reviews_from_dvmn(token, page=1):
 def main():
     load_dotenv()
 
-
-
     dvmn_token = os.environ.get('DEVMAN_TOKEN')
-
     long_polling_url = 'https://dvmn.org/api/long_polling/'
     headers = {'Authorization': f'Token {dvmn_token}'}
     payload = {'timestamp': ''}
-    tg_token = os.environ.get('TG_TOKEN')
 
+    tg_token = os.environ.get('TG_TOKEN')
+    bot = Bot(token=tg_token)
     updater = Updater(token=tg_token)
     dispatcher = updater.dispatcher
-    chat_id = update.message.chat_id
+    # chat_id = update.message.chat_id
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
 
-    updater.start_polling()
-    updater.idle()
+    # result_code_review = ''
+    # bot.sendMessage(chat_id=283111606, text=get_message_for_chat(result_code_review))
 
     while True:
+
         try:
             response = requests.get(url=long_polling_url, params=payload, headers=headers, timeout=95)
             if response.json()['status'] == 'found':
                 payload['timestamp'] = response.json()['last_attempt_timestamp']
-                result_code_review = response.json()['new_attempts'][0]
-                answer = get_message_for_chat(result_code_review)
+                answer = get_message_for_chat(response.json()['new_attempts'][0])
                 bot.sendMessage(chat_id=283111606, text=answer)
+
         except requests.exceptions.ConnectionError as connection_err:
             logger.error(f"No HTTP connection\n{connection_err}\n")
             time.sleep(60)
@@ -147,8 +147,9 @@ def main():
             logger.error(f"Timeout error\n{timeout_err}\n")
             time.sleep(60)
 
+        updater.start_polling()
+        updater.idle()
+
 
 if __name__ == '__main__':
    main()
-
-    

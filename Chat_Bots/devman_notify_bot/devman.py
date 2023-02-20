@@ -1,20 +1,15 @@
-import os
-import sys
-from datetime import datetime
 import logging
+import os
+import time
+from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
-import time
-
 from telegram import Update, Bot
 from telegram.ext import (
     Updater,
     CommandHandler,
-    MessageHandler,
-    Filters,
-    CallbackContext,
-    CallbackQueryHandler
+    CallbackContext
 )
 
 logging.basicConfig(
@@ -39,14 +34,16 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 def get_message_for_chat(result_code_review):
     """Готовит информацию для публикации в tg"""
-    answer = 'урок пройден'
+    answer = 'Ура! 😊 🧑‍🏫 Преподаватель проверил вашу работу! Урок сдан!💪'
     if result_code_review['is_negative']:
-        answer = 'урок не пройден, есть улучшения.'
+        answer = '🧑‍🏫 К сожалению 😞, урок не пройден.👎\nПосмотрите код-ревью преподавателя.'
 
-    message = f"Урок: {result_code_review['lesson_title']}\n" \
-              f"Дата: {result_code_review['submitted_at']}\n" \
-              f"Результат: {answer}.\n"
+    message = f"{answer}" \
+              f"📑 '{result_code_review['lesson_title']}'\n" \
+              f"🕦 {result_code_review['submitted_at']}\n" \
+              f"📃 {result_code_review['lesson_url']}"
     return message
+
 
 def bop(bot, update):
     message = get_message_for_chat(result_code_review)
@@ -121,24 +118,20 @@ def main():
 
     tg_token = os.environ.get('TG_TOKEN')
     bot = Bot(token=tg_token)
+    chat_id = os.environ.get('CHAT_ID')
     updater = Updater(token=tg_token)
     dispatcher = updater.dispatcher
-    # chat_id = update.message.chat_id
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-
-    # result_code_review = ''
-    # bot.sendMessage(chat_id=283111606, text=get_message_for_chat(result_code_review))
+    # dispatcher.add_handler(CommandHandler("help", help_command))
 
     while True:
-
         try:
             response = requests.get(url=long_polling_url, params=payload, headers=headers, timeout=95)
             if response.json()['status'] == 'found':
                 payload['timestamp'] = response.json()['last_attempt_timestamp']
                 answer = get_message_for_chat(response.json()['new_attempts'][0])
-                bot.sendMessage(chat_id=283111606, text=answer)
+                bot.sendMessage(chat_id=int(chat_id), text=answer)
 
         except requests.exceptions.ConnectionError as connection_err:
             logger.error(f"No HTTP connection\n{connection_err}\n")

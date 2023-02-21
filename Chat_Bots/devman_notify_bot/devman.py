@@ -24,13 +24,13 @@ def get_message_for_chat(result_code_review):
               "😊 Ура! 🎊 Преподаватель проверил вашу работу!🎉\n" \
              f"📃 Урок '{result_code_review['lesson_title']}' сдан!💪\n" \
              f"👀 Перейти к уроку: {result_code_review['lesson_url']}.\n" \
-             f"🕦 {refactor_date(result_code_review['submitted_at'])}"
+             f"🕦 {convert_datetime_to_string(result_code_review['submitted_at'])}"
     if result_code_review['is_negative']:
         message = f"🔔🔔🔔\n" \
                   f"😞 К сожалению, урок '{result_code_review['lesson_title']}' не пройден.👎\n" \
                   f"👀 Посмотрите код-ревью преподавателя: " \
                   f"{result_code_review['lesson_url']}.\n" \
-                  f"🕦 {refactor_date(result_code_review['submitted_at'])}"
+                  f"🕦 {convert_datetime_to_string(result_code_review['submitted_at'])}"
     return message
 
 

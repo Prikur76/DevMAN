@@ -46,8 +46,8 @@ def main():
 
     bot = Bot(token=tg_token)
 
-    parser = argparse.ArgumentParser(description='Скачивание книг из библиотеки  tululu.org')
-    parser.add_argument('user_id', nargs='?', type=int, default=int(chat_id), help='Ввести chat_id ')
+    parser = argparse.ArgumentParser(description='Получение уведомлений с сайта dvmn.org')
+    parser.add_argument('chat_id', nargs='?', type=int, default=int(chat_id), help='Ввести chat_id')
     args = parser.parse_args()
     user_id = args.chat_id
 

@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ```
 ### Авторизация
 Для хранения чувствительных данных (токен devman, токен бота, chat_id пользователя) создайте файл .env 
-с переменными DEVMAN_TOKEN, TG_TOKEN, CHAT_ID.
+с переменными **`DEVMAN_TOKEN, TG_TOKEN, CHAT_ID`**.
 
 #### Токен Devman
 Персональный токен вида **`a7895e2a783d0XXXXXca804deca28a9035490e1`** указан на 

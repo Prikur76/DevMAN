@@ -62,10 +62,10 @@ def main():
 
         except requests.exceptions.ConnectionError as connection_err:
             logger.error(f"No HTTP connection\n{connection_err}\n")
-            time.sleep(10)
+            time.sleep(60)
         except requests.exceptions.ReadTimeout as timeout_err:
             logger.error(f"Timeout error\n{timeout_err}\n")
-            time.sleep(10)
+            time.sleep(60)
 
 
 if __name__ == '__main__':

@@ -17,8 +17,8 @@ def get_message_for_chat(review):
     review_date = datetime.fromisoformat(review['submitted_at'])\
         .strftime("%d.%m.%Y %H:%M")
     message = """\
-    🔔🔔🔔
-    😊 Ура! 🎊 Преподаватель проверил вашу работу!🎉
+    😊😊😊
+    🔔 Ура! 🎊 Преподаватель проверил вашу работу!🎉
     📃 Урок '%s' сдан!💪
     👀 Перейти к уроку: %s.
     🕦 %s
@@ -26,8 +26,8 @@ def get_message_for_chat(review):
 
     if review['is_negative']:
         message = """\
-        🔔🔔🔔
-        😞 К сожалению, урок '%s' не пройден.👎
+        😞😞😞       
+        🔔 К сожалению, урок '%s' не пройден.👎
         👀 Посмотрите код-ревью преподавателя: %s.
         🕦 %s
         """ % (review['lesson_title'], review['lesson_url'], review_date)
@@ -36,14 +36,14 @@ def get_message_for_chat(review):
 
 def main():
     logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        format='%(asctime)s - %(name)s - %(levelname)s - %(funcName)s: %(message)s',
         level=logging.INFO
     )
 
     load_dotenv()
     dvmn_token = os.environ.get('DEVMAN_TOKEN')
     tg_token = os.environ.get('TG_TOKEN')
-    chat_id = os.environ.get('CHAT_ID')
+    chat_id = os.environ.get('ADMIN_CHAT_ID')
 
     long_polling_url = 'https://dvmn.org/api/long_polling/'
     headers = {'Authorization': f'Token {dvmn_token}'}
@@ -78,7 +78,7 @@ def main():
                 payload['timestamp'] = datetime.timestamp(datetime.now())
 
         except requests.exceptions.ConnectionError:
-            logger.error("Lost HTTP connection")
+            logger.error('Lost HTTP connection')
             time.sleep(60)
         except requests.exceptions.ReadTimeout:
             pass
